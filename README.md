@@ -1,4 +1,4 @@
-# angular-io-slimscroll
+# angular-io-slimScroll
 
 Customizable slimScroll directive for Angular 2.
 
