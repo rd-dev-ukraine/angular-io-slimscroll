@@ -43,7 +43,7 @@ Existing slimScrolls do not work as they should... So we have written another on
 ## Installation
 
 ````shell
-git clone https://github.com/rd-dev-ukraine/angular-io-slimscroll.git
+npm i angular-io-slimscroll --save
 ````
 
 ## API Reference
