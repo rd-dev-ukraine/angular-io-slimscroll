@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Slim scroll directive for angular2",
   "main": "./src/slimscroll.directive.ts",
+  "typings": "./src/slimscroll.directive.ts",
   "scripts": {
-    "start": "tsc -w"
+    "prepublish": "tsc -p src/"
   },
   "keywords": [
     "angular",

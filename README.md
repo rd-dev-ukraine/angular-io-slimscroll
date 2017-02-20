@@ -9,18 +9,21 @@ Customizable slimScroll directive for Angular 2.
 You'll need to add `SlimScroll` to your application module.
 
 ```typescript
+import { SlimScroll } from 'angular-io-slimscroll';
+
 @NgModule({
   declarations: [
+    SlimScroll,
     AppComponent
   ],
   imports: [
-    SlimScroll,
     ...
   ],
-  providers: [],
+  providers: [
+    ...
+  ],
   bootstrap: [AppComponent]
 })
-
 export class AppModule {
 }
 ```
