@@ -247,12 +247,12 @@ export class SlimScroll implements OnInit, OnDestroy {
             if (this._previousHeight !== this._me.scrollHeight) {
                 this._previousHeight = this._me.scrollHeight;
 
+                this.init();
+
                 if (this._options.autoScrollToBottom) {
                     this._renderer.setElementStyle(this._bar, "top", this._me.offsetHeight - this._bar.offsetHeight + "px");
                     this.scrollContent(0, true);
                 }
-
-                this.init();
             }
         }, 1000);
     }
