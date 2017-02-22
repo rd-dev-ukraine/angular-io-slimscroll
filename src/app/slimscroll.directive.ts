@@ -70,6 +70,8 @@ interface SlimScrollOptions {
     // set default point from which to start scrolling
     scrollTo: number;
 
+    // auto scroll to bottom when content was added
+    autoScrollToBottom: boolean;
 }
 
 const defaults: SlimScrollOptions = {
@@ -95,7 +97,8 @@ const defaults: SlimScrollOptions = {
     touchScrollStep: 200,
     borderRadius: "7px",
     railBorderRadius: "7px",
-    scrollTo: 0
+    scrollTo: 0,
+    autoScrollToBottom: false
 };
 
 @Directive({
@@ -233,18 +236,28 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._options.scrollTo = value || defaults.scrollTo;
     }
 
+    @Input() set autoScrollToBottom(value: boolean) {
+        this._options.autoScrollToBottom = value || defaults.autoScrollToBottom;
+    }
+
     private trackPanelHeightChanged(): void {
         this._previousHeight = this._me.scrollHeight;
 
         this._changesTracker = setInterval(() => {
             if (this._previousHeight !== this._me.scrollHeight) {
                 this._previousHeight = this._me.scrollHeight;
+
                 this.init();
+
+                if (this._options.autoScrollToBottom) {
+                    this._renderer.setElementStyle(this._bar, "top", this._me.offsetHeight - this._bar.offsetHeight + "px");
+                    this.scrollContent(0, true);
+                }
             }
         }, 1000);
     }
 
-    private hasParentClass(e: any, className: string): boolean {
+    private hasParentClass(e: HTMLElement, className: string): boolean {
         if (!e) {
             return false;
         }
@@ -270,7 +283,7 @@ export class SlimScroll implements OnInit, OnDestroy {
             delta = e.detail / 3;
         }
 
-        let target = e.target || e.currentTarget || e.relatedTarget;
+        const target = (e.target || e.currentTarget || e.relatedTarget) as HTMLElement;
         if (this.hasParentClass(target, this._options.wrapperClass)) {
             // scroll content
             this.scrollContent(delta, true);
@@ -304,8 +317,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         if (this._percentScroll === ~~this._percentScroll) {
             // release wheel
             this._releaseScroll = this._options.allowPageScroll;
-        }
-        else {
+        } else {
             this._releaseScroll = false;
         }
 
@@ -336,8 +348,8 @@ export class SlimScroll implements OnInit, OnDestroy {
 
     private scrollContent(y: number, isWheel: boolean, isJump: boolean = false): void {
         this._releaseScroll = false;
-        let delta = y;
-        let maxTop = this._me.offsetHeight - this._bar.offsetHeight;
+        let delta: number = y;
+        const maxTop: number = this._me.offsetHeight - this._bar.offsetHeight;
 
         if (isWheel) {
             // move bar with mouse wheel
@@ -383,7 +395,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._renderer.setElementStyle(this._bar, "height", this._barHeight + "px");
 
         // hide scrollbar if content is not long enough
-        let display = this._barHeight === this._me.offsetHeight ? "none" : "block";
+        const display = this._barHeight === this._me.offsetHeight ? "none" : "block";
         this._renderer.setElementStyle(this._bar, "display", display);
     }
 
@@ -394,11 +406,11 @@ export class SlimScroll implements OnInit, OnDestroy {
         if ("height" in this._options && this._options.height === "auto") {
             this._renderer.setElementStyle(this._me.parentElement, "height", "auto");
             this._renderer.setElementStyle(this._me, "height", "auto");
-            let height = this._me.parentElement.clientHeight;
+            const height = this._me.parentElement.clientHeight;
             this._renderer.setElementStyle(this._me.parentElement, "height", height + "px");
             this._renderer.setElementStyle(this._me, "height", height + "px");
         } else if ("height" in this._options) {
-            let h = this._options.height;
+            const h = this._options.height;
             this._renderer.setElementStyle(this._me.parentElement, "height", h);
             this._renderer.setElementStyle(this._me, "height", h);
         }
@@ -407,7 +419,7 @@ export class SlimScroll implements OnInit, OnDestroy {
 
     private setup(): void {
         // wrap content
-        let wrapper = document.createElement("div");
+        const wrapper = document.createElement("div");
         this._renderer.setElementClass(wrapper, this._options.wrapperClass, true);
         this._renderer.setElementStyle(wrapper, "position", "relative");
         this._renderer.setElementStyle(wrapper, "overflow", "hidden");
@@ -462,10 +474,9 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._me.parentElement.insertBefore(wrapper, this._me);
         wrapper.appendChild(this._me);
 
-
         if (this._options.scrollTo > 0) {
             // jump to a static point
-            let offset = this._options.scrollTo;
+            const offset = this._options.scrollTo;
             // scroll content by the given offset
             this.scrollContent(offset, false, true);
         }
@@ -478,24 +489,24 @@ export class SlimScroll implements OnInit, OnDestroy {
             this._isDragg = true;
 
             // disable text selection
-            this._renderer.setElementStyle(document.querySelector('body'), "-webkit-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "-moz-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "-ms-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "user-select", "none");
+            this._renderer.setElementStyle(document.querySelector("body"), "-webkit-user-select", "none");
+            this._renderer.setElementStyle(document.querySelector("body"), "-moz-user-select", "none");
+            this._renderer.setElementStyle(document.querySelector("body"), "-ms-user-select", "none");
+            this._renderer.setElementStyle(document.querySelector("body"), "user-select", "none");
 
-            let t = parseFloat(this._bar.style.top);
-            let pageY = e.pageY;
+            const t = parseFloat(this._bar.style.top);
+            const pageY = e.pageY;
 
-            let mousemoveEvent = (event: MouseEvent) => {
-                let currTop = t + event.pageY - pageY;
+            const mousemoveEvent = (event: MouseEvent) => {
+                const currTop = t + event.pageY - pageY;
                 this._renderer.setElementStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
-                let position = this._bar.getClientRects()[0];
+                const position = this._bar.getClientRects()[0];
                 if (position) {
                     this.scrollContent(0, position.top > 0);
                 }
             };
 
-            let mouseupEvent = () => {
+            const mouseupEvent = () => {
                 this._isDragg = false;
 
                 // return normal text selection
