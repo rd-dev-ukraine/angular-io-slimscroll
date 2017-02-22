@@ -1,12 +1,12 @@
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
 var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
 import { Directive, Renderer, HostListener, Input, ElementRef } from "@angular/core";
 const defaults = {
     width: "auto",
@@ -41,95 +41,128 @@ export let SlimScroll = class SlimScroll {
         this._me = elementRef.nativeElement;
         this._options = Object.assign({}, defaults);
     }
+
     ngOnInit() {
         this.init();
     }
+
     ngOnDestroy() {
         if (this._changesTracker) {
             clearInterval(this._changesTracker);
         }
     }
+
     onResize() {
         this.init();
     }
+
     set width(value) {
         this._options.width = value || defaults.width;
     }
+
     set height(value) {
         this._options.height = value || defaults.height;
     }
+
     set size(value) {
         this._options.size = value || defaults.size;
     }
+
     set color(value) {
         this._options.color = value || defaults.color;
     }
+
     set position(value) {
         this._options.position = value || defaults.position;
     }
+
     set distance(value) {
         this._options.distance = value || defaults.distance;
     }
+
     set start(value) {
         this._options.start = value || defaults.start;
     }
+
     set opacity(value) {
         this._options.opacity = value || defaults.opacity;
     }
+
     set transition(value) {
         this._options.transition = value || defaults.transition;
     }
+
     set alwaysVisible(value) {
         this._options.alwaysVisible = value || defaults.alwaysVisible;
     }
+
     set disableFadeOut(value) {
         this._options.disableFadeOut = value || defaults.disableFadeOut;
     }
+
     set railVisible(value) {
         this._options.railVisible = value || defaults.railVisible;
     }
+
     set railColor(value) {
         this._options.railColor = value || defaults.railColor;
     }
+
     set railOpacity(value) {
         this._options.railOpacity = value || defaults.railOpacity;
     }
+
     set railClass(value) {
         this._options.railClass = value || defaults.railClass;
     }
+
     set barClass(value) {
         this._options.barClass = value || defaults.barClass;
     }
+
     set wrapperClass(value) {
         this._options.wrapperClass = value || defaults.wrapperClass;
     }
+
     set allowPageScroll(value) {
         this._options.allowPageScroll = value || defaults.allowPageScroll;
     }
+
     set wheelStep(value) {
         this._options.wheelStep = value || defaults.wheelStep;
     }
+
     set touchScrollStep(value) {
         this._options.touchScrollStep = value || defaults.touchScrollStep;
     }
+
     set borderRadius(value) {
         this._options.borderRadius = value || defaults.borderRadius;
     }
+
     set railBorderRadius(value) {
         this._options.railBorderRadius = value || defaults.railBorderRadius;
     }
+
     set scrollTo(value) {
         this._options.scrollTo = value || defaults.scrollTo;
     }
+
     trackPanelHeightChanged() {
         this._previousHeight = this._me.scrollHeight;
-        this._changesTracker = setInterval(() => {
-            if (this._previousHeight !== this._me.scrollHeight) {
-                this._previousHeight = this._me.scrollHeight;
-                this.init();
-            }
-        }, 1000);
+        this._changesTracker = setInterval(() = > {
+                if (this._previousHeight !== this._me.scrollHeight
+    )
+        {
+            this._previousHeight = this._me.scrollHeight;
+            this.init();
+        }
+    },
+        1000
+    )
+        ;
     }
+
     hasParentClass(e, className) {
         if (!e) {
             return false;
@@ -139,6 +172,7 @@ export let SlimScroll = class SlimScroll {
         }
         return this.hasParentClass(e.parentElement, className);
     }
+
     onWheel(e) {
         // use mouse wheel only when mouse is over
         if (!this._isOverPanel) {
@@ -164,15 +198,23 @@ export let SlimScroll = class SlimScroll {
             e.returnValue = false;
         }
     }
+
     attachWheel(target) {
         if (window.addEventListener) {
-            target.addEventListener("DOMMouseScroll", (e) => this.onWheel(e), false);
-            target.addEventListener("mousewheel", (e) => this.onWheel(e), false);
+            target.addEventListener("DOMMouseScroll", (e) = > this.onWheel(e), false
+        )
+            ;
+            target.addEventListener("mousewheel", (e) = > this.onWheel(e), false
+        )
+            ;
         }
         else {
-            document.addEventListener("mousewheel", (e) => this.onWheel(e), false);
+            document.addEventListener("mousewheel", (e) = > this.onWheel(e), false
+        )
+            ;
         }
     }
+
     showBar() {
         // recalculate bar height
         this.getBarHeight();
@@ -195,17 +237,25 @@ export let SlimScroll = class SlimScroll {
         this._renderer.setElementStyle(this._bar, "opacity", this._options.opacity.toString());
         this._renderer.setElementStyle(this._rail, "opacity", this._options.railOpacity.toString());
     }
+
     hideBar() {
         // only hide when options allow it
         if (!this._options.alwaysVisible) {
-            this._queueHide = setTimeout(() => {
-                if (!(this._options.disableFadeOut && this._isOverPanel) && !this._isOverBar && !this._isDragg) {
-                    this._renderer.setElementStyle(this._bar, "opacity", "0");
-                    this._renderer.setElementStyle(this._rail, "opacity", "0");
-                }
-            }, 1000);
+            this._queueHide = setTimeout(() = > {
+                    if (
+            !(this._options.disableFadeOut && this._isOverPanel) && !this._isOverBar && !this._isDragg
+        )
+            {
+                this._renderer.setElementStyle(this._bar, "opacity", "0");
+                this._renderer.setElementStyle(this._rail, "opacity", "0");
+            }
+        },
+            1000
+        )
+            ;
         }
     }
+
     scrollContent(y, isWheel, isJump = false) {
         this._releaseScroll = false;
         let delta = y;
@@ -239,6 +289,7 @@ export let SlimScroll = class SlimScroll {
         // trigger hide when scroll is stopped
         this.hideBar();
     }
+
     getBarHeight() {
         // calculate scrollbar height and make sure it is not too small
         this._barHeight = Math.max(this._me.offsetHeight / (this._me.scrollHeight === 0 ? 1 : this._me.scrollHeight) * this._me.offsetHeight, this._minBarHeight);
@@ -247,6 +298,7 @@ export let SlimScroll = class SlimScroll {
         let display = this._barHeight === this._me.offsetHeight ? "none" : "block";
         this._renderer.setElementStyle(this._bar, "display", display);
     }
+
     refresh() {
         this.getBarHeight();
         // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
@@ -263,6 +315,7 @@ export let SlimScroll = class SlimScroll {
             this._renderer.setElementStyle(this._me, "height", h);
         }
     }
+
     setup() {
         // wrap content
         let wrapper = document.createElement("div");
@@ -323,74 +376,108 @@ export let SlimScroll = class SlimScroll {
         // append to parent div
         this._me.parentElement.appendChild(this._bar);
         this._me.parentElement.appendChild(this._rail);
-        this._bar.addEventListener("mousedown", e => {
+        this._bar.addEventListener("mousedown", e = > {
             this._isDragg = true;
-            // disable text selection
-            this._renderer.setElementStyle(document.querySelector('body'), "-webkit-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "-moz-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "-ms-user-select", "none");
-            this._renderer.setElementStyle(document.querySelector('body'), "user-select", "none");
-            let t = parseFloat(this._bar.style.top);
-            let pageY = e.pageY;
-            let mousemoveEvent = (event) => {
-                let currTop = t + event.pageY - pageY;
-                this._renderer.setElementStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
-                let position = this._bar.getClientRects()[0];
-                if (position) {
-                    this.scrollContent(0, position.top > 0);
-                }
-            };
-            let mouseupEvent = () => {
-                this._isDragg = false;
-                // return normal text selection
-                this._renderer.setElementStyle(document.querySelector('body'), "-webkit-user-select", "initial");
-                this._renderer.setElementStyle(document.querySelector('body'), "-moz-user-select", "initial");
-                this._renderer.setElementStyle(document.querySelector('body'), "-ms-user-select", "initial");
-                this._renderer.setElementStyle(document.querySelector('body'), "user-select", "initial");
-                this.hideBar();
-                document.removeEventListener("mousemove", mousemoveEvent, false);
-                document.removeEventListener("mouseup", mouseupEvent, false);
-            };
-            document.addEventListener("mousemove", mousemoveEvent, false);
-            document.addEventListener("mouseup", mouseupEvent, false);
-            return false;
-        }, false);
+        // disable text selection
+        this._renderer.setElementStyle(document.querySelector('body'), "-webkit-user-select", "none");
+        this._renderer.setElementStyle(document.querySelector('body'), "-moz-user-select", "none");
+        this._renderer.setElementStyle(document.querySelector('body'), "-ms-user-select", "none");
+        this._renderer.setElementStyle(document.querySelector('body'), "user-select", "none");
+        let t = parseFloat(this._bar.style.top);
+        let pageY = e.pageY;
+        let mousemoveEvent = (event) =
+    >
+        {
+            let currTop = t + event.pageY - pageY;
+            this._renderer.setElementStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
+            let position = this._bar.getClientRects()[0];
+            if (position) {
+                this.scrollContent(0, position.top > 0);
+            }
+        }
+        ;
+        let mouseupEvent = () =
+    >
+        {
+            this._isDragg = false;
+            // return normal text selection
+            this._renderer.setElementStyle(document.querySelector('body'), "-webkit-user-select", "initial");
+            this._renderer.setElementStyle(document.querySelector('body'), "-moz-user-select", "initial");
+            this._renderer.setElementStyle(document.querySelector('body'), "-ms-user-select", "initial");
+            this._renderer.setElementStyle(document.querySelector('body'), "user-select", "initial");
+            this.hideBar();
+            document.removeEventListener("mousemove", mousemoveEvent, false);
+            document.removeEventListener("mouseup", mouseupEvent, false);
+        }
+        ;
+        document.addEventListener("mousemove", mousemoveEvent, false);
+        document.addEventListener("mouseup", mouseupEvent, false);
+        return false;
+    },
+        false
+    )
+        ;
         // on rail over
-        this._rail.addEventListener("mouseenter", () => this.showBar(), false);
-        this._rail.addEventListener("mouseleave", () => this.hideBar(), false);
+        this._rail.addEventListener("mouseenter", () = > this.showBar(), false
+    )
+        ;
+        this._rail.addEventListener("mouseleave", () = > this.hideBar(), false
+    )
+        ;
         // on bar over
-        this._bar.addEventListener("mouseenter", () => this._isOverBar = true, false);
-        this._bar.addEventListener("mouseleave", () => this._isOverBar = false, false);
+        this._bar.addEventListener("mouseenter", () = > this._isOverBar = true, false
+    )
+        ;
+        this._bar.addEventListener("mouseleave", () = > this._isOverBar = false, false
+    )
+        ;
         // show on parent mouseover
-        this._me.addEventListener("mouseenter", () => {
+        this._me.addEventListener("mouseenter", () = > {
             this._isOverPanel = true;
-            this.showBar();
-            this.hideBar();
-        }, false);
-        this._me.addEventListener("mouseleave", () => {
+        this.showBar();
+        this.hideBar();
+    },
+        false
+    )
+        ;
+        this._me.addEventListener("mouseleave", () = > {
             this._isOverPanel = false;
-            this.hideBar();
-        }, false);
+        this.hideBar();
+    },
+        false
+    )
+        ;
         // support for mobile
-        this._me.addEventListener("touchstart", e => {
-            if (e.touches.length) {
-                // record where touch started
-                this._touchDif = e.touches[0].pageY;
-            }
-        }, false);
-        this._me.addEventListener("touchmove", e => {
+        this._me.addEventListener("touchstart", e = > {
+            if (e.touches.length
+    )
+        {
+            // record where touch started
+            this._touchDif = e.touches[0].pageY;
+        }
+    },
+        false
+    )
+        ;
+        this._me.addEventListener("touchmove", e = > {
             // prevent scrolling the page if necessary
-            if (!this._releaseScroll) {
-                e.preventDefault();
-            }
-            if (e.touches.length) {
-                // see how far user swiped
-                let diff = (this._touchDif - e.touches[0].pageY) / this._options.touchScrollStep;
-                // scroll content
-                this.scrollContent(diff, true);
-                this._touchDif = e.touches[0].pageY;
-            }
-        }, false);
+            if (
+        !this._releaseScroll
+    )
+        {
+            e.preventDefault();
+        }
+        if (e.touches.length) {
+            // see how far user swiped
+            let diff = (this._touchDif - e.touches[0].pageY) / this._options.touchScrollStep;
+            // scroll content
+            this.scrollContent(diff, true);
+            this._touchDif = e.touches[0].pageY;
+        }
+    },
+        false
+    )
+        ;
         // set up initial height
         this.getBarHeight();
         // hide bar on init if alwaysVisible equal false
@@ -406,6 +493,7 @@ export let SlimScroll = class SlimScroll {
         // check whether it changes in content 
         this.trackPanelHeightChanged();
     }
+
     init() {
         // ensure we are not binding it again
         if (this._bar && this._rail) {
@@ -417,130 +505,130 @@ export let SlimScroll = class SlimScroll {
     }
 };
 __decorate([
-    HostListener("window:resize", ["$event"]), 
-    __metadata('design:type', Function), 
-    __metadata('design:paramtypes', []), 
+    HostListener("window:resize", ["$event"]),
+    __metadata('design:type', Function),
+    __metadata('design:paramtypes', []),
     __metadata('design:returntype', void 0)
 ], SlimScroll.prototype, "onResize", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "width", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "height", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "size", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "color", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "position", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "distance", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "start", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "opacity", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "transition", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Boolean), 
+    Input(),
+    __metadata('design:type', Boolean),
     __metadata('design:paramtypes', [Boolean])
 ], SlimScroll.prototype, "alwaysVisible", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Boolean), 
+    Input(),
+    __metadata('design:type', Boolean),
     __metadata('design:paramtypes', [Boolean])
 ], SlimScroll.prototype, "disableFadeOut", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Boolean), 
+    Input(),
+    __metadata('design:type', Boolean),
     __metadata('design:paramtypes', [Boolean])
 ], SlimScroll.prototype, "railVisible", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "railColor", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "railOpacity", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "railClass", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "barClass", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "wrapperClass", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Boolean), 
+    Input(),
+    __metadata('design:type', Boolean),
     __metadata('design:paramtypes', [Boolean])
 ], SlimScroll.prototype, "allowPageScroll", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "wheelStep", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "touchScrollStep", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "borderRadius", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', String), 
+    Input(),
+    __metadata('design:type', String),
     __metadata('design:paramtypes', [String])
 ], SlimScroll.prototype, "railBorderRadius", null);
 __decorate([
-    Input(), 
-    __metadata('design:type', Number), 
+    Input(),
+    __metadata('design:type', Number),
     __metadata('design:paramtypes', [Number])
 ], SlimScroll.prototype, "scrollTo", null);
 SlimScroll = __decorate([
     Directive({
         selector: "[slimScroll]"
-    }), 
+    }),
     __metadata('design:paramtypes', [Renderer, ElementRef])
 ], SlimScroll);
 //# sourceMappingURL=slimscroll.directive.js.map
