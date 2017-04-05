@@ -43,8 +43,8 @@ export class SlimScroll implements OnInit, OnDestroy {
     private _barHeight: number;
     private _percentScroll: number;
     private _lastScroll: number;
-    private _minBarHeight = 30;
-    private _releaseScroll = false;
+    private _minBarHeight: number = 30;
+    private _releaseScroll: boolean = false;
     private _options: SlimScrollOptions;
     private _previousHeight: number;
     private _queueHide: number;
@@ -471,10 +471,10 @@ export class SlimScroll implements OnInit, OnDestroy {
                 this._isDragg = false;
 
                 // return normal text selection
-                this._renderer.setStyle(document.querySelector('body'), "-webkit-user-select", "initial");
-                this._renderer.setStyle(document.querySelector('body'), "-moz-user-select", "initial");
-                this._renderer.setStyle(document.querySelector('body'), "-ms-user-select", "initial");
-                this._renderer.setStyle(document.querySelector('body'), "user-select", "initial");
+                this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "initial");
+                this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "initial");
+                this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "initial");
+                this._renderer.setStyle(document.querySelector("body"), "user-select", "initial");
 
                 this.hideBar();
 
@@ -522,7 +522,7 @@ export class SlimScroll implements OnInit, OnDestroy {
             }
             if (e.touches.length) {
                 // see how far user swiped
-                let diff = (this._touchDif - e.touches[0].pageY) / this._options.touchScrollStep;
+                const diff = (this._touchDif - e.touches[0].pageY) / this._options.touchScrollStep;
                 // scroll content
                 this.scrollContent(diff, true);
                 this._touchDif = e.touches[0].pageY;

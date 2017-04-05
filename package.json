@@ -1,6 +1,6 @@
 {
   "name": "angular-io-slimscroll",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "description": "Slim scroll directive for angular2",
   "main": "./src/slimscroll.directive.ts",
@@ -8,10 +8,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
+    "deploy": "ng build --prod --base-href \"angular-io-slimscroll\" && ngh",
     "lint": "ng lint",
-    "e2e": "ng e2e",
     "prepublish": "tsc -p src/"
   },
   "keywords": [
