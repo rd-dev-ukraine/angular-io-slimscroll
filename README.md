@@ -19,13 +19,9 @@ import { SlimScroll } from 'angular-io-slimscroll';
   imports: [
     ...
   ],
-  providers: [
-    ...
-  ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 And then add `slimScroll` attribute with options to your element:
