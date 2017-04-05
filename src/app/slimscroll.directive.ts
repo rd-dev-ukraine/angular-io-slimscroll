@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input, OnInit, OnDestroy, ElementRef, Renderer2 } from "@angular/core";
+import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 
 const defaults: SlimScrollOptions = {
     width: "auto",
@@ -48,15 +48,13 @@ export class SlimScroll implements OnInit, OnDestroy {
     private _queueHide: number;
     private _changesTracker: number;
 
-    public constructor(
-        private _renderer: Renderer2,
-        elementRef: ElementRef
-    ) {
+    public constructor(private _renderer: Renderer2,
+                       elementRef: ElementRef) {
         this._me = elementRef.nativeElement;
     }
 
     public ngOnInit(): void {
-        this._options = {...defaults};
+        this._options = { ...defaults };
         this.init();
     }
 
