@@ -2,6 +2,9 @@
 node_modules
 npm-debug.log
 
+
+.idea
+
 # Angular
 dist
 example
@@ -16,5 +19,5 @@ tsconfig.json
 tsconfig.publish.json
 tslint.json
 *.ts
-!slimscroll.d.ts
+!*.d.ts
 .gitignore
