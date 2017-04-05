@@ -1,3 +1,5 @@
+/// <reference path="../slimscroll.d.ts" />
+
 import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 
 const defaults: SlimScrollOptions = {
@@ -51,10 +53,10 @@ export class SlimScroll implements OnInit, OnDestroy {
     public constructor(private _renderer: Renderer2,
                        elementRef: ElementRef) {
         this._me = elementRef.nativeElement;
+        this._options = { ...defaults };
     }
 
     public ngOnInit(): void {
-        this._options = { ...defaults };
         this.init();
     }
 
@@ -79,7 +81,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._options.height = value || defaults.height;
     }
 
-    @Input("size")
+    @Input()
     public set size(value: string) {
         this._options.size = value || defaults.size;
     }
@@ -99,7 +101,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._options.distance = value || defaults.distance;
     }
 
-    @Input("start")
+    @Input()
     public set start(value: string) {
         this._options.start = value || defaults.start;
     }
