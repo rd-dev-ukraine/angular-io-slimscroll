@@ -1,7 +1,7 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
+
 import { AppComponent } from "./app.component";
 import { SlimScroll } from "./slimscroll.directive";
 
@@ -12,8 +12,7 @@ import { SlimScroll } from "./slimscroll.directive";
     ],
     imports: [
         BrowserModule,
-        FormsModule,
-        HttpModule
+        FormsModule
     ],
     providers: [],
     bootstrap: [AppComponent]
