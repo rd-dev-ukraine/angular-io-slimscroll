@@ -1,8 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./src",
-    "baseUrl": "src",
+    "outDir": "./example",
+    "baseUrl": "example",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

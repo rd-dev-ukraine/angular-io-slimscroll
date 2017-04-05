@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "sourceMap": true
+  },
+  "file": [
+    "slimscroll.directive.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "example"
+  ]
+}

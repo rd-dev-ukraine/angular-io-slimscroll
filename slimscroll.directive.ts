@@ -1,4 +1,4 @@
-/// <reference path="../slimscroll.d.ts" />
+/// <reference path="./slimscroll.d.ts" />
 
 import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 

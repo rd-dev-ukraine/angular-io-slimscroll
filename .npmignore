@@ -2,16 +2,9 @@
 node_modules
 npm-debug.log
 
-# Angular dist
+# Angular
 dist
-
-src/app
-src/assets
-src/environments
-favicon.ico
-index.html
-
-
+example
 
 # OS generated files
 Thumbs.db
@@ -20,9 +13,8 @@ Thumbs.db
 # Ignored files
 .angular-cli.json
 tsconfig.json
+tsconfig.publish.json
 tslint.json
-src/tsconfig.app.json
-*.css
 *.ts
 !slimscroll.d.ts
 .gitignore

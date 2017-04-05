@@ -4,10 +4,7 @@
     "outDir": "../out-tsc/app",
     "module": "es2015",
     "baseUrl": "",
-    "types": [],
-    "files": [
-      "slimscroll.directive.ts"
-    ]
+    "types": []
   },
   "exclude": [
     "test.ts",
