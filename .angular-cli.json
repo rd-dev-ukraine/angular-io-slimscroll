@@ -30,9 +30,11 @@
   ],
   "addons": [],
   "packages": [],
-  "lint": [{
-    "project": "example/tsconfig.app.json"
-  }],
+  "lint": [
+    {
+      "project": "example/tsconfig.app.json"
+    }
+  ],
   "defaults": {
     "styleExt": "css",
     "component": {}
