@@ -44,7 +44,7 @@ var defaults = {
     scrollTo: 0,
     autoScrollToBottom: false
 };
-var SlimScroll = (function () {
+var SlimScroll = /** @class */ (function () {
     function SlimScroll(_renderer, elementRef) {
         this._renderer = _renderer;
         this._minBarHeight = 30;
@@ -534,140 +534,140 @@ var SlimScroll = (function () {
         // check whether it changes in content
         this.trackPanelHeightChanged();
     };
+    __decorate([
+        core_1.HostListener("window:resize", ["$event"]),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], SlimScroll.prototype, "onResize", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "width", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "height", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "size", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "color", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "position", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "distance", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "start", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "opacity", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "transition", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], SlimScroll.prototype, "alwaysVisible", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], SlimScroll.prototype, "disableFadeOut", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], SlimScroll.prototype, "railVisible", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "railColor", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "railOpacity", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "railClass", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "barClass", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "wrapperClass", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], SlimScroll.prototype, "allowPageScroll", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "wheelStep", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "touchScrollStep", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "borderRadius", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String),
+        __metadata("design:paramtypes", [String])
+    ], SlimScroll.prototype, "railBorderRadius", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "scrollTo", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean),
+        __metadata("design:paramtypes", [Boolean])
+    ], SlimScroll.prototype, "autoScrollToBottom", null);
+    SlimScroll = __decorate([
+        core_1.Directive({
+            selector: "[slimScroll]"
+        }),
+        __metadata("design:paramtypes", [core_1.Renderer2,
+            core_1.ElementRef])
+    ], SlimScroll);
     return SlimScroll;
 }());
-__decorate([
-    core_1.HostListener("window:resize", ["$event"]),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], SlimScroll.prototype, "onResize", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "width", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "height", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "size", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "color", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "position", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "distance", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "start", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "opacity", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "transition", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], SlimScroll.prototype, "alwaysVisible", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], SlimScroll.prototype, "disableFadeOut", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], SlimScroll.prototype, "railVisible", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "railColor", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "railOpacity", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "railClass", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "barClass", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "wrapperClass", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], SlimScroll.prototype, "allowPageScroll", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "wheelStep", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "touchScrollStep", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "borderRadius", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], SlimScroll.prototype, "railBorderRadius", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], SlimScroll.prototype, "scrollTo", null);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], SlimScroll.prototype, "autoScrollToBottom", null);
-SlimScroll = __decorate([
-    core_1.Directive({
-        selector: "[slimScroll]"
-    }),
-    __metadata("design:paramtypes", [core_1.Renderer2,
-        core_1.ElementRef])
-], SlimScroll);
 exports.SlimScroll = SlimScroll;
 //# sourceMappingURL=slimscroll.directive.js.map

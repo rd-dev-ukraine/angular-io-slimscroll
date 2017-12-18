@@ -1,8 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from "@angular/core";
-
-@Directive({
-    selector: "[slimScroll]",
-})
+import { ElementRef, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 export declare class SlimScroll implements OnInit, OnDestroy {
     private _renderer;
     private _me;
@@ -25,30 +21,30 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     ngOnInit(): void;
     ngOnDestroy(): void;
     onResize(): void;
-    @Input() width: string;
-    @Input() height: string;
-    @Input() size: string;
-    @Input() color: string;
-    @Input() position: string;
-    @Input() distance: string;
-    @Input() start: string;
-    @Input() opacity: number;
-    @Input() transition: number;
-    @Input() alwaysVisible: boolean;
-    @Input() disableFadeOut: boolean;
-    @Input() railVisible: boolean;
-    @Input() railColor: string;
-    @Input() railOpacity: number;
-    @Input() railClass: string;
-    @Input() barClass: string;
-    @Input() wrapperClass: string;
-    @Input() allowPageScroll: boolean;
-    @Input() wheelStep: number;
-    @Input() touchScrollStep: number;
-    @Input() borderRadius: string;
-    @Input() railBorderRadius: string;
-    @Input() scrollTo: number;
-    @Input() autoScrollToBottom: boolean;
+    width: string;
+    height: string;
+    size: string;
+    color: string;
+    position: string;
+    distance: string;
+    start: string;
+    opacity: number;
+    transition: number;
+    alwaysVisible: boolean;
+    disableFadeOut: boolean;
+    railVisible: boolean;
+    railColor: string;
+    railOpacity: number;
+    railClass: string;
+    barClass: string;
+    wrapperClass: string;
+    allowPageScroll: boolean;
+    wheelStep: number;
+    touchScrollStep: number;
+    borderRadius: string;
+    railBorderRadius: string;
+    scrollTo: number;
+    autoScrollToBottom: boolean;
     private init();
     private trackPanelHeightChanged();
     private hasParentClass(e, className);
