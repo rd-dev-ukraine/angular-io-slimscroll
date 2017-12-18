@@ -17,7 +17,6 @@ Thumbs.db
 .angular-cli.json
 tsconfig.json
 tsconfig.publish.json
-tslint.json
 *.ts
 !*.d.ts
 .gitignore
