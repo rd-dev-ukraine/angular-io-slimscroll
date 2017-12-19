@@ -47,6 +47,7 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     railBorderRadius: string;
     scrollTo: number;
     autoScrollToBottom: boolean;
+    maxHeightBeforeEnable: number;
     private init();
     private trackPanelHeightChanged;
     private hasParentClass;

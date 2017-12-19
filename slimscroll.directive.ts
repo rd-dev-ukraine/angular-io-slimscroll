@@ -72,6 +72,9 @@ interface SlimScrollOptions {
 
     // auto scroll to bottom when content was added
     autoScrollToBottom: boolean;
+
+    // if content will have height more than the value - slimscroll will be enabled
+    maxHeightBeforeEnable?: number;
 }
 
 const defaults: SlimScrollOptions = {
@@ -98,7 +101,8 @@ const defaults: SlimScrollOptions = {
     borderRadius: "7px",
     railBorderRadius: "7px",
     scrollTo: 0,
-    autoScrollToBottom: false
+    autoScrollToBottom: false,
+    maxHeightBeforeEnable: undefined,
 };
 
 @Directive({
@@ -273,6 +277,11 @@ export class SlimScroll implements OnInit, OnDestroy {
     @Input()
     public set autoScrollToBottom(value: boolean) {
         this._options.autoScrollToBottom = value || defaults.autoScrollToBottom;
+    }
+
+    @Input()
+    public set maxHeightBeforeEnable(value: number) {
+        this._options.maxHeightBeforeEnable = value || defaults.maxHeightBeforeEnable;
     }
 
     private init(): void {
@@ -521,6 +530,13 @@ export class SlimScroll implements OnInit, OnDestroy {
     }
 
     private setup = (): void => {
+        // check whether it changes in content
+        this.trackPanelHeightChanged();
+
+        if (this._options.maxHeightBeforeEnable && this._me.scrollHeight <= this._options.maxHeightBeforeEnable) {
+            return;
+        }
+
         // wrap content
         const wrapper = document.createElement("div");
         this._renderer.addClass(wrapper, this._options.wrapperClass);
@@ -645,8 +661,5 @@ export class SlimScroll implements OnInit, OnDestroy {
 
         // attach scroll events
         this.attachWheel(window);
-
-        // check whether it changes in content
-        this.trackPanelHeightChanged();
     };
 }

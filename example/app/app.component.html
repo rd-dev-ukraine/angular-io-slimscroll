@@ -19,6 +19,13 @@
     <pre><code>default</code></pre>
 </div>
 <div class="example">
+    <div slimScroll railVisible="true" [disableFadeOut]="true" [maxHeightBeforeEnable]="300" >
+        {{content}}
+    </div>
+    <button (click)="addContent()">add content</button>
+    <pre><code>[maxHeightBeforeEnable]="true" [height]="300"</code></pre>
+</div>
+<div class="example">
     <div slimScroll width="100px">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet
         asperiores at atque beatae
         consectetur distinctio doloribus ducimus earum expedita facere fugiat incidunt iure, labore, maxime

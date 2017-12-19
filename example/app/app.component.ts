@@ -6,10 +6,14 @@ import { Component } from "@angular/core";
     styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
-    private showSidebar: boolean;
+    public content: string;
 
     constructor() {
-        this.showSidebar = true;
+        this.content = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet asperiores at atque beatae";
+    }
+
+    addContent() {
+        this.content += "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet asperiores at atque beatae";
     }
 
 }

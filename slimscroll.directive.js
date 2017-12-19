@@ -42,7 +42,8 @@ var defaults = {
     borderRadius: "7px",
     railBorderRadius: "7px",
     scrollTo: 0,
-    autoScrollToBottom: false
+    autoScrollToBottom: false,
+    maxHeightBeforeEnable: undefined,
 };
 var SlimScroll = /** @class */ (function () {
     function SlimScroll(_renderer, elementRef) {
@@ -217,6 +218,11 @@ var SlimScroll = /** @class */ (function () {
             return false;
         };
         this.setup = function () {
+            // check whether it changes in content
+            _this.trackPanelHeightChanged();
+            if (_this._options.maxHeightBeforeEnable && _this._me.scrollHeight <= _this._options.maxHeightBeforeEnable) {
+                return;
+            }
             // wrap content
             var wrapper = document.createElement("div");
             _this._renderer.addClass(wrapper, _this._options.wrapperClass);
@@ -324,8 +330,6 @@ var SlimScroll = /** @class */ (function () {
             }
             // attach scroll events
             _this.attachWheel(window);
-            // check whether it changes in content
-            _this.trackPanelHeightChanged();
         };
         this._me = elementRef.nativeElement;
         this._options = __assign({}, defaults);
@@ -518,6 +522,13 @@ var SlimScroll = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(SlimScroll.prototype, "maxHeightBeforeEnable", {
+        set: function (value) {
+            this._options.maxHeightBeforeEnable = value || defaults.maxHeightBeforeEnable;
+        },
+        enumerable: true,
+        configurable: true
+    });
     SlimScroll.prototype.init = function () {
         // ensure we are not binding it again
         if (this._bar && this._rail) {
@@ -677,6 +688,11 @@ var SlimScroll = /** @class */ (function () {
         __metadata("design:type", Boolean),
         __metadata("design:paramtypes", [Boolean])
     ], SlimScroll.prototype, "autoScrollToBottom", null);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number),
+        __metadata("design:paramtypes", [Number])
+    ], SlimScroll.prototype, "maxHeightBeforeEnable", null);
     SlimScroll = __decorate([
         core_1.Directive({
             selector: "[slimScroll]"
