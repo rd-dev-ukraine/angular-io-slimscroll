@@ -46,9 +46,278 @@ var defaults = {
 };
 var SlimScroll = /** @class */ (function () {
     function SlimScroll(_renderer, elementRef) {
+        var _this = this;
         this._renderer = _renderer;
         this._minBarHeight = 30;
         this._releaseScroll = false;
+        this.trackPanelHeightChanged = function () {
+            _this._previousHeight = _this._me.scrollHeight;
+            _this._changesTracker = window.setInterval(function () {
+                if (_this._previousHeight !== _this._me.scrollHeight) {
+                    _this._previousHeight = _this._me.scrollHeight;
+                    _this.init();
+                    if (_this._options.autoScrollToBottom) {
+                        _this._renderer.setStyle(_this._bar, "top", _this._me.offsetHeight - _this._bar.offsetHeight + "px");
+                        _this.scrollContent(0, true);
+                    }
+                }
+            }, 1000);
+        };
+        this.hasParentClass = function (e, className) {
+            if (!e) {
+                return false;
+            }
+            if (e.classList.contains(_this._options.wrapperClass)) {
+                return true;
+            }
+            return _this.hasParentClass(e.parentElement, className);
+        };
+        this.onWheel = function (e) {
+            // use mouse wheel only when mouse is over
+            if (!_this._isOverPanel) {
+                return;
+            }
+            var delta = 0;
+            if (e.wheelDelta) {
+                delta = -e.wheelDelta / 120;
+            }
+            if (e.detail) {
+                delta = e.detail / 3;
+            }
+            var target = (e.target || e.currentTarget || e.relatedTarget);
+            if (_this.hasParentClass(target, _this._options.wrapperClass)) {
+                // scroll content
+                _this.scrollContent(delta, true);
+            }
+            // stop window scroll
+            if (e.preventDefault && !_this._releaseScroll) {
+                e.preventDefault();
+            }
+            if (!_this._releaseScroll) {
+                e.returnValue = false;
+            }
+        };
+        this.attachWheel = function (target) {
+            if (window.addEventListener) {
+                target.addEventListener("DOMMouseScroll", _this.onWheel, false);
+                target.addEventListener("mousewheel", _this.onWheel, false);
+            }
+            else {
+                document.addEventListener("mousewheel", _this.onWheel, false);
+            }
+        };
+        this.showBar = function () {
+            // recalculate bar height
+            _this.getBarHeight();
+            clearTimeout(_this._queueHide || 0);
+            // when bar reached top or bottom
+            if (_this._percentScroll === ~~_this._percentScroll) {
+                // release wheel
+                _this._releaseScroll = _this._options.allowPageScroll;
+            }
+            else {
+                _this._releaseScroll = false;
+            }
+            _this._lastScroll = _this._percentScroll;
+            // show only when required
+            if (_this._barHeight >= _this._me.offsetHeight) {
+                // allow window scroll
+                _this._releaseScroll = true;
+                return;
+            }
+            _this._renderer.setStyle(_this._bar, "opacity", _this._options.opacity.toString());
+            _this._renderer.setStyle(_this._rail, "opacity", _this._options.railOpacity.toString());
+        };
+        this.hideBar = function () {
+            // only hide when options allow it
+            if (!_this._options.alwaysVisible
+                && !(_this._options.disableFadeOut && _this._isOverPanel)
+                && !_this._isOverBar
+                && !_this._isDragg) {
+                _this._queueHide = window.setTimeout(function () {
+                    _this._renderer.setStyle(_this._bar, "opacity", "0");
+                    _this._renderer.setStyle(_this._rail, "opacity", "0");
+                }, 1000);
+            }
+        };
+        this.scrollContent = function (y, isWheel, isJump) {
+            if (isJump === void 0) { isJump = false; }
+            _this._releaseScroll = false;
+            var delta = y;
+            var maxTop = _this._me.offsetHeight - _this._bar.offsetHeight;
+            if (isWheel) {
+                // move bar with mouse wheel
+                delta = parseInt(_this._bar.style.top, 10) + y * _this._options.wheelStep / 100 * _this._bar.offsetHeight;
+                // move bar, make sure it doesn"t go out
+                delta = Math.min(Math.max(delta, 0), maxTop);
+                // if scrolling down, make sure a fractional change to the
+                // scroll position isn"t rounded away when the scrollbar"s CSS is set
+                // this flooring of delta would happened automatically when
+                // bar.css is set below, but we floor here for clarity
+                delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+                // scroll the scrollbar
+                _this._renderer.setStyle(_this._bar, "top", delta + "px");
+            }
+            // calculate actual scroll amount
+            _this._percentScroll = parseInt(_this._bar.style.top, 10) / (_this._me.offsetHeight - _this._bar.offsetHeight);
+            delta = _this._percentScroll * (_this._me.scrollHeight - _this._me.offsetHeight);
+            if (isJump) {
+                delta = y;
+                var offsetTop = delta / _this._me.scrollHeight * _this._me.offsetHeight;
+                offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                _this._renderer.setStyle(_this._bar, "top", offsetTop + "px");
+            }
+            // scroll content
+            _this._me.scrollTop = delta;
+            // ensure bar is visible
+            _this.showBar();
+            // trigger hide when scroll is stopped
+            _this.hideBar();
+        };
+        this.barMouseMove = function (event) {
+            var currTop = _this._startBarTop + event.pageY - _this._barMouseDownPageY;
+            _this._renderer.setStyle(_this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
+            var position = _this._bar.getClientRects()[0];
+            if (position) {
+                _this.scrollContent(0, position.top > 0);
+            }
+        };
+        this.barMouseUp = function () {
+            _this._isDragg = false;
+            // return normal text selection
+            var body = document.body;
+            _this._renderer.setStyle(body, "-webkit-user-select", "initial");
+            _this._renderer.setStyle(body, "-moz-user-select", "initial");
+            _this._renderer.setStyle(body, "-ms-user-select", "initial");
+            _this._renderer.setStyle(body, "user-select", "initial");
+            _this.hideBar();
+            document.removeEventListener("mousemove", _this.barMouseMove, false);
+            document.removeEventListener("mouseup", _this.barMouseUp, false);
+        };
+        this.barMouseDown = function (e) {
+            _this._isDragg = true;
+            // disable text selection
+            var body = document.body;
+            _this._renderer.setStyle(body, "-webkit-user-select", "none");
+            _this._renderer.setStyle(body, "-moz-user-select", "none");
+            _this._renderer.setStyle(body, "-ms-user-select", "none");
+            _this._renderer.setStyle(body, "user-select", "none");
+            _this._barMouseDownPageY = e.pageY;
+            _this._startBarTop = parseFloat(_this._bar.style.top);
+            document.addEventListener("mousemove", _this.barMouseMove, false);
+            document.addEventListener("mouseup", _this.barMouseUp, false);
+            return false;
+        };
+        this.setup = function () {
+            // wrap content
+            var wrapper = document.createElement("div");
+            _this._renderer.addClass(wrapper, _this._options.wrapperClass);
+            _this._renderer.setStyle(wrapper, "position", "relative");
+            _this._renderer.setStyle(wrapper, "overflow", "hidden");
+            _this._renderer.setStyle(wrapper, "width", _this._options.width);
+            _this._renderer.setStyle(wrapper, "height", _this._options.height);
+            // update style for the div
+            _this._renderer.setStyle(_this._me, "overflow", "hidden");
+            _this._renderer.setStyle(_this._me, "width", _this._options.width);
+            _this._renderer.setStyle(_this._me, "height", _this._options.height);
+            // create scrollbar rail
+            _this._rail = document.createElement("div");
+            _this._renderer.addClass(_this._rail, _this._options.railClass);
+            _this._renderer.setStyle(_this._rail, "width", _this._options.size);
+            _this._renderer.setStyle(_this._rail, "height", "100%");
+            _this._renderer.setStyle(_this._rail, "position", "absolute");
+            _this._renderer.setStyle(_this._rail, "top", "0");
+            _this._renderer.setStyle(_this._rail, "display", _this._options.railVisible ? "block" : "none");
+            _this._renderer.setStyle(_this._rail, "border-radius", _this._options.railBorderRadius);
+            _this._renderer.setStyle(_this._rail, "background", _this._options.railColor);
+            _this._renderer.setStyle(_this._rail, "opacity", _this._options.railOpacity.toString());
+            _this._renderer.setStyle(_this._rail, "transition", "opacity " + _this._options.transition + "s");
+            _this._renderer.setStyle(_this._rail, "z-index", "90");
+            // create scrollbar
+            _this._bar = document.createElement("div");
+            _this._renderer.addClass(_this._bar, _this._options.barClass);
+            _this._renderer.setStyle(_this._bar, "background", _this._options.color);
+            _this._renderer.setStyle(_this._bar, "width", _this._options.size);
+            _this._renderer.setStyle(_this._bar, "position", "absolute");
+            _this._renderer.setStyle(_this._bar, "top", "0");
+            _this._renderer.setStyle(_this._bar, "opacity", _this._options.opacity.toString());
+            _this._renderer.setStyle(_this._bar, "transition", "opacity " + _this._options.transition + "s");
+            _this._renderer.setStyle(_this._bar, "display", _this._options.alwaysVisible ? "block" : "none");
+            _this._renderer.setStyle(_this._bar, "border-radius", _this._options.borderRadius);
+            _this._renderer.setStyle(_this._bar, "webkit-border-radius", _this._options.borderRadius);
+            _this._renderer.setStyle(_this._bar, "moz-border-radius", _this._options.borderRadius);
+            _this._renderer.setStyle(_this._bar, "z-index", "99");
+            // set position
+            if (_this._options.position === "right") {
+                _this._renderer.setStyle(_this._rail, "right", _this._options.distance);
+                _this._renderer.setStyle(_this._bar, "right", _this._options.distance);
+            }
+            else {
+                _this._renderer.setStyle(_this._rail, "left", _this._options.distance);
+                _this._renderer.setStyle(_this._bar, "left", _this._options.distance);
+            }
+            // wrap it
+            _this._me.parentElement.insertBefore(wrapper, _this._me);
+            wrapper.appendChild(_this._me);
+            if (_this._options.scrollTo > 0) {
+                // jump to a static point
+                _this.scrollContent(_this._options.scrollTo, false, true);
+            }
+            // append to parent div
+            _this._me.parentElement.appendChild(_this._bar);
+            _this._me.parentElement.appendChild(_this._rail);
+            _this._bar.addEventListener("mousedown", _this.barMouseDown, false);
+            // on rail over
+            _this._rail.addEventListener("mouseenter", _this.showBar, false);
+            _this._rail.addEventListener("mouseleave", _this.hideBar, false);
+            // on bar over
+            _this._bar.addEventListener("mouseenter", function () { return _this._isOverBar = true; }, false);
+            _this._bar.addEventListener("mouseleave", function () { return _this._isOverBar = false; }, false);
+            // show on parent mouseover
+            _this._me.addEventListener("mouseenter", function () {
+                _this._isOverPanel = true;
+                _this.showBar();
+                _this.hideBar();
+            }, false);
+            _this._me.addEventListener("mouseleave", function () {
+                _this._isOverPanel = false;
+                _this.hideBar();
+            }, false);
+            // support for mobile
+            _this._me.addEventListener("touchstart", function (e) {
+                if (e.touches.length) {
+                    // record where touch started
+                    _this._touchDif = e.touches[0].pageY;
+                }
+            }, false);
+            _this._me.addEventListener("touchmove", function (e) {
+                // prevent scrolling the page if necessary
+                if (!_this._releaseScroll) {
+                    e.preventDefault();
+                }
+                if (e.touches.length) {
+                    // see how far user swiped
+                    var diff = (_this._touchDif - e.touches[0].pageY) / _this._options.touchScrollStep;
+                    // scroll content
+                    _this.scrollContent(diff, true);
+                    _this._touchDif = e.touches[0].pageY;
+                }
+            }, false);
+            // set up initial height
+            _this.getBarHeight();
+            // hide bar on init if alwaysVisible equal false
+            _this.hideBar();
+            // check start position
+            if (_this._options.start === "bottom") {
+                // scroll content to bottom
+                _this._renderer.setStyle(_this._bar, "top", _this._me.offsetHeight - _this._bar.offsetHeight + "px");
+                _this.scrollContent(0, true);
+            }
+            // attach scroll events
+            _this.attachWheel(window);
+            // check whether it changes in content
+            _this.trackPanelHeightChanged();
+        };
         this._me = elementRef.nativeElement;
         this._options = __assign({}, defaults);
     }
@@ -59,6 +328,15 @@ var SlimScroll = /** @class */ (function () {
         if (this._changesTracker) {
             clearInterval(this._changesTracker);
         }
+        if (window.removeEventListener) {
+            window.removeEventListener("DOMMouseScroll", this.onWheel);
+            window.removeEventListener("mousewheel", this.onWheel);
+        }
+        else {
+            document.removeEventListener("mousewheel", this.onWheel);
+        }
+        document.removeEventListener("mousemove", this.barMouseMove, false);
+        document.removeEventListener("mouseup", this.barMouseUp, false);
     };
     SlimScroll.prototype.onResize = function () {
         this.init();
@@ -240,132 +518,6 @@ var SlimScroll = /** @class */ (function () {
             this.setup();
         }
     };
-    SlimScroll.prototype.trackPanelHeightChanged = function () {
-        var _this = this;
-        this._previousHeight = this._me.scrollHeight;
-        this._changesTracker = window.setInterval(function () {
-            if (_this._previousHeight !== _this._me.scrollHeight) {
-                _this._previousHeight = _this._me.scrollHeight;
-                _this.init();
-                if (_this._options.autoScrollToBottom) {
-                    _this._renderer.setStyle(_this._bar, "top", _this._me.offsetHeight - _this._bar.offsetHeight + "px");
-                    _this.scrollContent(0, true);
-                }
-            }
-        }, 1000);
-    };
-    SlimScroll.prototype.hasParentClass = function (e, className) {
-        if (!e) {
-            return false;
-        }
-        if (e.classList.contains(this._options.wrapperClass)) {
-            return true;
-        }
-        return this.hasParentClass(e.parentElement, className);
-    };
-    SlimScroll.prototype.onWheel = function (e) {
-        // use mouse wheel only when mouse is over
-        if (!this._isOverPanel) {
-            return;
-        }
-        var delta = 0;
-        if (e.wheelDelta) {
-            delta = -e.wheelDelta / 120;
-        }
-        if (e.detail) {
-            delta = e.detail / 3;
-        }
-        var target = (e.target || e.currentTarget || e.relatedTarget);
-        if (this.hasParentClass(target, this._options.wrapperClass)) {
-            // scroll content
-            this.scrollContent(delta, true);
-        }
-        // stop window scroll
-        if (e.preventDefault && !this._releaseScroll) {
-            e.preventDefault();
-        }
-        if (!this._releaseScroll) {
-            e.returnValue = false;
-        }
-    };
-    SlimScroll.prototype.attachWheel = function (target) {
-        var _this = this;
-        if (window.addEventListener) {
-            target.addEventListener("DOMMouseScroll", function (e) { return _this.onWheel(e); }, false);
-            target.addEventListener("mousewheel", function (e) { return _this.onWheel(e); }, false);
-        }
-        else {
-            document.addEventListener("mousewheel", function (e) { return _this.onWheel(e); }, false);
-        }
-    };
-    SlimScroll.prototype.showBar = function () {
-        // recalculate bar height
-        this.getBarHeight();
-        clearTimeout(this._queueHide);
-        // when bar reached top or bottom
-        if (this._percentScroll === ~~this._percentScroll) {
-            // release wheel
-            this._releaseScroll = this._options.allowPageScroll;
-        }
-        else {
-            this._releaseScroll = false;
-        }
-        this._lastScroll = this._percentScroll;
-        // show only when required
-        if (this._barHeight >= this._me.offsetHeight) {
-            // allow window scroll
-            this._releaseScroll = true;
-            return;
-        }
-        this._renderer.setStyle(this._bar, "opacity", this._options.opacity.toString());
-        this._renderer.setStyle(this._rail, "opacity", this._options.railOpacity.toString());
-    };
-    SlimScroll.prototype.hideBar = function () {
-        var _this = this;
-        // only hide when options allow it
-        if (!this._options.alwaysVisible) {
-            this._queueHide = window.setTimeout(function () {
-                if (!(_this._options.disableFadeOut && _this._isOverPanel) && !_this._isOverBar && !_this._isDragg) {
-                    _this._renderer.setStyle(_this._bar, "opacity", "0");
-                    _this._renderer.setStyle(_this._rail, "opacity", "0");
-                }
-            }, 1000);
-        }
-    };
-    SlimScroll.prototype.scrollContent = function (y, isWheel, isJump) {
-        if (isJump === void 0) { isJump = false; }
-        this._releaseScroll = false;
-        var delta = y;
-        var maxTop = this._me.offsetHeight - this._bar.offsetHeight;
-        if (isWheel) {
-            // move bar with mouse wheel
-            delta = parseInt(this._bar.style.top, 10) + y * this._options.wheelStep / 100 * this._bar.offsetHeight;
-            // move bar, make sure it doesn"t go out
-            delta = Math.min(Math.max(delta, 0), maxTop);
-            // if scrolling down, make sure a fractional change to the
-            // scroll position isn"t rounded away when the scrollbar"s CSS is set
-            // this flooring of delta would happened automatically when
-            // bar.css is set below, but we floor here for clarity
-            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
-            // scroll the scrollbar
-            this._renderer.setStyle(this._bar, "top", delta + "px");
-        }
-        // calculate actual scroll amount
-        this._percentScroll = parseInt(this._bar.style.top, 10) / (this._me.offsetHeight - this._bar.offsetHeight);
-        delta = this._percentScroll * (this._me.scrollHeight - this._me.offsetHeight);
-        if (isJump) {
-            delta = y;
-            var offsetTop = delta / this._me.scrollHeight * this._me.offsetHeight;
-            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
-            this._renderer.setStyle(this._bar, "top", offsetTop + "px");
-        }
-        // scroll content
-        this._me.scrollTop = delta;
-        // ensure bar is visible
-        this.showBar();
-        // trigger hide when scroll is stopped
-        this.hideBar();
-    };
     SlimScroll.prototype.getBarHeight = function () {
         // calculate scrollbar height and make sure it is not too small
         this._barHeight = Math.max(this._me.offsetHeight / (this._me.scrollHeight === 0 ? 1 : this._me.scrollHeight) * this._me.offsetHeight, this._minBarHeight);
@@ -389,150 +541,6 @@ var SlimScroll = /** @class */ (function () {
             this._renderer.setStyle(this._me.parentElement, "height", h);
             this._renderer.setStyle(this._me, "height", h);
         }
-    };
-    SlimScroll.prototype.setup = function () {
-        var _this = this;
-        // wrap content
-        var wrapper = document.createElement("div");
-        this._renderer.addClass(wrapper, this._options.wrapperClass);
-        this._renderer.setStyle(wrapper, "position", "relative");
-        this._renderer.setStyle(wrapper, "overflow", "hidden");
-        this._renderer.setStyle(wrapper, "width", this._options.width);
-        this._renderer.setStyle(wrapper, "height", this._options.height);
-        // update style for the div
-        this._renderer.setStyle(this._me, "overflow", "hidden");
-        this._renderer.setStyle(this._me, "width", this._options.width);
-        this._renderer.setStyle(this._me, "height", this._options.height);
-        // create scrollbar rail
-        this._rail = document.createElement("div");
-        this._renderer.addClass(this._rail, this._options.railClass);
-        this._renderer.setStyle(this._rail, "width", this._options.size);
-        this._renderer.setStyle(this._rail, "height", "100%");
-        this._renderer.setStyle(this._rail, "position", "absolute");
-        this._renderer.setStyle(this._rail, "top", "0");
-        this._renderer.setStyle(this._rail, "display", this._options.railVisible ? "block" : "none");
-        this._renderer.setStyle(this._rail, "border-radius", this._options.railBorderRadius);
-        this._renderer.setStyle(this._rail, "background", this._options.railColor);
-        this._renderer.setStyle(this._rail, "opacity", this._options.railOpacity.toString());
-        this._renderer.setStyle(this._rail, "transition", "opacity " + this._options.transition + "s");
-        this._renderer.setStyle(this._rail, "z-index", "90");
-        // create scrollbar
-        this._bar = document.createElement("div");
-        this._renderer.addClass(this._bar, this._options.barClass);
-        this._renderer.setStyle(this._bar, "background", this._options.color);
-        this._renderer.setStyle(this._bar, "width", this._options.size);
-        this._renderer.setStyle(this._bar, "position", "absolute");
-        this._renderer.setStyle(this._bar, "top", "0");
-        this._renderer.setStyle(this._bar, "opacity", this._options.opacity.toString());
-        this._renderer.setStyle(this._bar, "transition", "opacity " + this._options.transition + "s");
-        this._renderer.setStyle(this._bar, "display", this._options.alwaysVisible ? "block" : "none");
-        this._renderer.setStyle(this._bar, "border-radius", this._options.borderRadius);
-        this._renderer.setStyle(this._bar, "webkit-border-radius", this._options.borderRadius);
-        this._renderer.setStyle(this._bar, "moz-border-radius", this._options.borderRadius);
-        this._renderer.setStyle(this._bar, "z-index", "99");
-        // set position
-        if (this._options.position === "right") {
-            this._renderer.setStyle(this._rail, "right", this._options.distance);
-            this._renderer.setStyle(this._bar, "right", this._options.distance);
-        }
-        else {
-            this._renderer.setStyle(this._rail, "left", this._options.distance);
-            this._renderer.setStyle(this._bar, "left", this._options.distance);
-        }
-        // wrap it
-        this._me.parentElement.insertBefore(wrapper, this._me);
-        wrapper.appendChild(this._me);
-        if (this._options.scrollTo > 0) {
-            // jump to a static point
-            var offset = this._options.scrollTo;
-            // scroll content by the given offset
-            this.scrollContent(offset, false, true);
-        }
-        // append to parent div
-        this._me.parentElement.appendChild(this._bar);
-        this._me.parentElement.appendChild(this._rail);
-        this._bar.addEventListener("mousedown", function (e) {
-            _this._isDragg = true;
-            // disable text selection
-            _this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "none");
-            _this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "none");
-            _this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "none");
-            _this._renderer.setStyle(document.querySelector("body"), "user-select", "none");
-            var t = parseFloat(_this._bar.style.top);
-            var pageY = e.pageY;
-            var mousemoveEvent = function (event) {
-                var currTop = t + event.pageY - pageY;
-                _this._renderer.setStyle(_this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
-                var position = _this._bar.getClientRects()[0];
-                if (position) {
-                    _this.scrollContent(0, position.top > 0);
-                }
-            };
-            var mouseupEvent = function () {
-                _this._isDragg = false;
-                // return normal text selection
-                _this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "initial");
-                _this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "initial");
-                _this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "initial");
-                _this._renderer.setStyle(document.querySelector("body"), "user-select", "initial");
-                _this.hideBar();
-                document.removeEventListener("mousemove", mousemoveEvent, false);
-                document.removeEventListener("mouseup", mouseupEvent, false);
-            };
-            document.addEventListener("mousemove", mousemoveEvent, false);
-            document.addEventListener("mouseup", mouseupEvent, false);
-            return false;
-        }, false);
-        // on rail over
-        this._rail.addEventListener("mouseenter", function () { return _this.showBar(); }, false);
-        this._rail.addEventListener("mouseleave", function () { return _this.hideBar(); }, false);
-        // on bar over
-        this._bar.addEventListener("mouseenter", function () { return _this._isOverBar = true; }, false);
-        this._bar.addEventListener("mouseleave", function () { return _this._isOverBar = false; }, false);
-        // show on parent mouseover
-        this._me.addEventListener("mouseenter", function () {
-            _this._isOverPanel = true;
-            _this.showBar();
-            _this.hideBar();
-        }, false);
-        this._me.addEventListener("mouseleave", function () {
-            _this._isOverPanel = false;
-            _this.hideBar();
-        }, false);
-        // support for mobile
-        this._me.addEventListener("touchstart", function (e) {
-            if (e.touches.length) {
-                // record where touch started
-                _this._touchDif = e.touches[0].pageY;
-            }
-        }, false);
-        this._me.addEventListener("touchmove", function (e) {
-            // prevent scrolling the page if necessary
-            if (!_this._releaseScroll) {
-                e.preventDefault();
-            }
-            if (e.touches.length) {
-                // see how far user swiped
-                var diff = (_this._touchDif - e.touches[0].pageY) / _this._options.touchScrollStep;
-                // scroll content
-                _this.scrollContent(diff, true);
-                _this._touchDif = e.touches[0].pageY;
-            }
-        }, false);
-        // set up initial height
-        this.getBarHeight();
-        // hide bar on init if alwaysVisible equal false
-        this.hideBar();
-        // check start position
-        if (this._options.start === "bottom") {
-            // scroll content to bottom
-            this._renderer.setStyle(this._bar, "top", this._me.offsetHeight - this._bar.offsetHeight + "px");
-            this.scrollContent(0, true);
-        }
-        // attach scroll events
-        this.attachWheel(window);
-        // check whether it changes in content
-        this.trackPanelHeightChanged();
     };
     __decorate([
         core_1.HostListener("window:resize", ["$event"]),

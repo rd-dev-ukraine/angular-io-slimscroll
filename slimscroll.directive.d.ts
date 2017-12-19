@@ -17,6 +17,8 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     private _previousHeight;
     private _queueHide;
     private _changesTracker;
+    private _barMouseDownPageY;
+    private _startBarTop;
     constructor(_renderer: Renderer2, elementRef: ElementRef);
     ngOnInit(): void;
     ngOnDestroy(): void;
@@ -46,14 +48,17 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     scrollTo: number;
     autoScrollToBottom: boolean;
     private init();
-    private trackPanelHeightChanged();
-    private hasParentClass(e, className);
-    private onWheel(e);
-    private attachWheel(target);
-    private showBar();
-    private hideBar();
-    private scrollContent(y, isWheel, isJump?);
+    private trackPanelHeightChanged;
+    private hasParentClass;
+    private onWheel;
+    private attachWheel;
+    private showBar;
+    private hideBar;
+    scrollContent: (y: number, isWheel: boolean, isJump?: boolean) => void;
     private getBarHeight();
     private refresh();
-    private setup();
+    private barMouseMove;
+    private barMouseUp;
+    private barMouseDown;
+    private setup;
 }
