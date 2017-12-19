@@ -464,10 +464,21 @@ export class SlimScroll implements OnInit, OnDestroy {
 
     }
 
+    private railMouseDown = (event: MouseEvent) => {
+        const clientRects = this._rail.getBoundingClientRect();
+        const elementOffsetTop = clientRects.top + window.scrollY;
+        const moveTo = event.pageY - elementOffsetTop - (this._barHeight / 2);
+        const scrollTo = this._me.scrollHeight * (moveTo / clientRects.height);
+        this._renderer.setStyle(this._bar, "top", (moveTo >= 0 ? moveTo : 0) + "px");
+
+        this.scrollContent(scrollTo, false, true);
+    };
+
     private barMouseMove = (event: MouseEvent) => {
         const currTop = this._startBarTop + event.pageY - this._barMouseDownPageY;
         this._renderer.setStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
         const position = this._bar.getClientRects()[0];
+
         if (position) {
             this.scrollContent(0, position.top > 0);
         }
@@ -580,6 +591,8 @@ export class SlimScroll implements OnInit, OnDestroy {
         // on rail over
         this._rail.addEventListener("mouseenter", this.showBar, false);
         this._rail.addEventListener("mouseleave", this.hideBar, false);
+
+        this._rail.addEventListener("mousedown", this.railMouseDown, false);
 
         // on bar over
         this._bar.addEventListener("mouseenter", () => this._isOverBar = true, false);

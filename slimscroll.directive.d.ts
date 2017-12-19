@@ -57,6 +57,7 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     scrollContent: (y: number, isWheel: boolean, isJump?: boolean) => void;
     private getBarHeight();
     private refresh();
+    private railMouseDown;
     private barMouseMove;
     private barMouseUp;
     private barMouseDown;

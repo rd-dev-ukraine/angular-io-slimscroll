@@ -174,6 +174,14 @@ var SlimScroll = /** @class */ (function () {
             // trigger hide when scroll is stopped
             _this.hideBar();
         };
+        this.railMouseDown = function (event) {
+            var clientRects = _this._rail.getBoundingClientRect();
+            var elementOffsetTop = clientRects.top + window.scrollY;
+            var moveTo = event.pageY - elementOffsetTop - (_this._barHeight / 2);
+            var scrollTo = _this._me.scrollHeight * (moveTo / clientRects.height);
+            _this._renderer.setStyle(_this._bar, "top", (moveTo >= 0 ? moveTo : 0) + "px");
+            _this.scrollContent(scrollTo, false, true);
+        };
         this.barMouseMove = function (event) {
             var currTop = _this._startBarTop + event.pageY - _this._barMouseDownPageY;
             _this._renderer.setStyle(_this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
@@ -270,6 +278,7 @@ var SlimScroll = /** @class */ (function () {
             // on rail over
             _this._rail.addEventListener("mouseenter", _this.showBar, false);
             _this._rail.addEventListener("mouseleave", _this.hideBar, false);
+            _this._rail.addEventListener("mousedown", _this.railMouseDown, false);
             // on bar over
             _this._bar.addEventListener("mouseenter", function () { return _this._isOverBar = true; }, false);
             _this._bar.addEventListener("mouseleave", function () { return _this._isOverBar = false; }, false);
