@@ -75,6 +75,7 @@ Options can be passed to an element via html attributes:
 |`railBorderRadius`  |string |`7px`           |Sets border radius of the rail                                     |
 |`scrollTo`          |number |`0`             |Set default point from which to start scrolling                    |
 |`autoScrollToBottom`|boolean|`false`         |Scroll to bottom on adding new content to container                |
+|`maxHeightBeforeEnable`|boolean|`undefined`  |Enable Slimscroll if content reach this limit                      |
 
 ## License
 
