@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from "@angular/core";
+import {Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2} from "@angular/core";
 
 interface SlimScrollOptions {
     // width in pixels of the visible scroll area
@@ -121,11 +121,13 @@ export class SlimScroll implements OnInit, OnDestroy {
     private _previousHeight: number;
     private _queueHide: number;
     private _changesTracker: number;
+    private _barMouseDownPageY: number;
+    private _startBarTop: number;
 
     public constructor(private _renderer: Renderer2,
                        elementRef: ElementRef) {
         this._me = elementRef.nativeElement;
-        this._options = { ...defaults };
+        this._options = {...defaults};
     }
 
     public ngOnInit(): void {
@@ -136,6 +138,16 @@ export class SlimScroll implements OnInit, OnDestroy {
         if (this._changesTracker) {
             clearInterval(this._changesTracker);
         }
+
+        if (window.removeEventListener) {
+            window.removeEventListener("DOMMouseScroll", this.onWheel);
+            window.removeEventListener("mousewheel", this.onWheel);
+        } else {
+            document.removeEventListener("mousewheel", this.onWheel);
+        }
+
+        document.removeEventListener("mousemove", this.barMouseMove, false);
+        document.removeEventListener("mouseup", this.barMouseUp, false);
     }
 
     @HostListener("window:resize", ["$event"])
@@ -273,7 +285,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     }
 
-    private trackPanelHeightChanged(): void {
+    private trackPanelHeightChanged = (): void => {
         this._previousHeight = this._me.scrollHeight;
 
         this._changesTracker = window.setInterval(() => {
@@ -288,9 +300,9 @@ export class SlimScroll implements OnInit, OnDestroy {
                 }
             }
         }, 1000);
-    }
+    };
 
-    private hasParentClass(e: HTMLElement, className: string): boolean {
+    private hasParentClass = (e: HTMLElement, className: string): boolean => {
         if (!e) {
             return false;
         }
@@ -300,9 +312,9 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
 
         return this.hasParentClass(e.parentElement, className);
-    }
+    };
 
-    private onWheel(e: MouseWheelEvent): void {
+    private onWheel = (e: MouseWheelEvent): void => {
         // use mouse wheel only when mouse is over
         if (!this._isOverPanel) {
             return;
@@ -329,22 +341,21 @@ export class SlimScroll implements OnInit, OnDestroy {
         if (!this._releaseScroll) {
             e.returnValue = false;
         }
-    }
+    };
 
-    private attachWheel(target: Window): void {
+    private attachWheel = (target: Window): void => {
         if (window.addEventListener) {
-            target.addEventListener("DOMMouseScroll", (e: WheelEvent) => this.onWheel(e), false);
-            target.addEventListener("mousewheel", (e: WheelEvent) => this.onWheel(e), false);
+            target.addEventListener("DOMMouseScroll", this.onWheel, false);
+            target.addEventListener("mousewheel", this.onWheel, false);
+        } else {
+            document.addEventListener("mousewheel", this.onWheel, false);
         }
-        else {
-            document.addEventListener("mousewheel", (e: WheelEvent) => this.onWheel(e), false);
-        }
-    }
+    };
 
-    private showBar(): void {
+    private showBar = (): void => {
         // recalculate bar height
         this.getBarHeight();
-        clearTimeout(this._queueHide);
+        clearTimeout(this._queueHide || 0);
 
         // when bar reached top or bottom
         if (this._percentScroll === ~~this._percentScroll) {
@@ -365,21 +376,24 @@ export class SlimScroll implements OnInit, OnDestroy {
 
         this._renderer.setStyle(this._bar, "opacity", this._options.opacity.toString());
         this._renderer.setStyle(this._rail, "opacity", this._options.railOpacity.toString());
-    }
+    };
 
-    private hideBar(): void {
+    private hideBar = (): void => {
         // only hide when options allow it
-        if (!this._options.alwaysVisible) {
+        if (
+            !this._options.alwaysVisible
+            && !(this._options.disableFadeOut && this._isOverPanel)
+            && !this._isOverBar
+            && !this._isDragg
+        ) {
             this._queueHide = window.setTimeout(() => {
-                if (!(this._options.disableFadeOut && this._isOverPanel) && !this._isOverBar && !this._isDragg) {
-                    this._renderer.setStyle(this._bar, "opacity", "0");
-                    this._renderer.setStyle(this._rail, "opacity", "0");
-                }
+                this._renderer.setStyle(this._bar, "opacity", "0");
+                this._renderer.setStyle(this._rail, "opacity", "0");
             }, 1000);
         }
-    }
+    };
 
-    private scrollContent(y: number, isWheel: boolean, isJump: boolean = false): void {
+    private scrollContent = (y: number, isWheel: boolean, isJump: boolean = false) => {
         this._releaseScroll = false;
         let delta: number = y;
         const maxTop: number = this._me.offsetHeight - this._bar.offsetHeight;
@@ -420,7 +434,7 @@ export class SlimScroll implements OnInit, OnDestroy {
 
         // trigger hide when scroll is stopped
         this.hideBar();
-    }
+    };
 
     private getBarHeight(): void {
         // calculate scrollbar height and make sure it is not too small
@@ -450,7 +464,50 @@ export class SlimScroll implements OnInit, OnDestroy {
 
     }
 
-    private setup(): void {
+    private barMouseMove = (event: MouseEvent) => {
+        const currTop = this._startBarTop + event.pageY - this._barMouseDownPageY;
+        this._renderer.setStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
+        const position = this._bar.getClientRects()[0];
+        if (position) {
+            this.scrollContent(0, position.top > 0);
+        }
+    };
+
+    private barMouseUp = () => {
+        this._isDragg = false;
+
+        // return normal text selection
+        this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "initial");
+        this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "initial");
+        this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "initial");
+        this._renderer.setStyle(document.querySelector("body"), "user-select", "initial");
+
+        this.hideBar();
+
+        document.removeEventListener("mousemove", this.barMouseMove, false);
+        document.removeEventListener("mouseup", this.barMouseUp, false);
+    };
+
+    private barMouseDown = (e) => {
+        this._isDragg = true;
+
+        // disable text selection
+        this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "none");
+        this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "none");
+        this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "none");
+        this._renderer.setStyle(document.querySelector("body"), "user-select", "none");
+
+
+        this._barMouseDownPageY = e.pageY;
+        this._startBarTop = parseFloat(this._bar.style.top);
+
+        document.addEventListener("mousemove", this.barMouseMove, false);
+        document.addEventListener("mouseup", this.barMouseUp, false);
+
+        return false;
+    }
+
+    private setup = (): void => {
         // wrap content
         const wrapper = document.createElement("div");
         this._renderer.addClass(wrapper, this._options.wrapperClass);
@@ -509,60 +566,18 @@ export class SlimScroll implements OnInit, OnDestroy {
 
         if (this._options.scrollTo > 0) {
             // jump to a static point
-            const offset = this._options.scrollTo;
-            // scroll content by the given offset
-            this.scrollContent(offset, false, true);
+            this.scrollContent(this._options.scrollTo, false, true);
         }
 
         // append to parent div
         this._me.parentElement.appendChild(this._bar);
         this._me.parentElement.appendChild(this._rail);
 
-        this._bar.addEventListener("mousedown", e => {
-            this._isDragg = true;
-
-            // disable text selection
-            this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "none");
-            this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "none");
-            this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "none");
-            this._renderer.setStyle(document.querySelector("body"), "user-select", "none");
-
-            const t = parseFloat(this._bar.style.top);
-            const pageY = e.pageY;
-
-            const mousemoveEvent = (event: MouseEvent) => {
-                const currTop = t + event.pageY - pageY;
-                this._renderer.setStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
-                const position = this._bar.getClientRects()[0];
-                if (position) {
-                    this.scrollContent(0, position.top > 0);
-                }
-            };
-
-            const mouseupEvent = () => {
-                this._isDragg = false;
-
-                // return normal text selection
-                this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "initial");
-                this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "initial");
-                this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "initial");
-                this._renderer.setStyle(document.querySelector("body"), "user-select", "initial");
-
-                this.hideBar();
-
-                document.removeEventListener("mousemove", mousemoveEvent, false);
-                document.removeEventListener("mouseup", mouseupEvent, false);
-            };
-
-            document.addEventListener("mousemove", mousemoveEvent, false);
-            document.addEventListener("mouseup", mouseupEvent, false);
-
-            return false;
-        }, false);
+        this._bar.addEventListener("mousedown", this.barMouseDown, false);
 
         // on rail over
-        this._rail.addEventListener("mouseenter", () => this.showBar(), false);
-        this._rail.addEventListener("mouseleave", () => this.hideBar(), false);
+        this._rail.addEventListener("mouseenter", this.showBar, false);
+        this._rail.addEventListener("mouseleave", this.hideBar, false);
 
         // on bar over
         this._bar.addEventListener("mouseenter", () => this._isOverBar = true, false);
@@ -618,5 +633,5 @@ export class SlimScroll implements OnInit, OnDestroy {
 
         // check whether it changes in content
         this.trackPanelHeightChanged();
-    }
+    };
 }
