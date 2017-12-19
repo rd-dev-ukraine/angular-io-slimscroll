@@ -1,4 +1,4 @@
-import {Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2} from "@angular/core";
+import {Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Output, Renderer2} from "@angular/core";
 
 interface SlimScrollOptions {
     // width in pixels of the visible scroll area
@@ -393,7 +393,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     };
 
-    private scrollContent = (y: number, isWheel: boolean, isJump: boolean = false) => {
+    public scrollContent = (y: number, isWheel: boolean, isJump: boolean = false) => {
         this._releaseScroll = false;
         let delta: number = y;
         const maxTop: number = this._me.offsetHeight - this._bar.offsetHeight;
@@ -477,10 +477,11 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._isDragg = false;
 
         // return normal text selection
-        this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "initial");
-        this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "initial");
-        this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "initial");
-        this._renderer.setStyle(document.querySelector("body"), "user-select", "initial");
+        const body = document.body;
+        this._renderer.setStyle(body, "-webkit-user-select", "initial");
+        this._renderer.setStyle(body, "-moz-user-select", "initial");
+        this._renderer.setStyle(body, "-ms-user-select", "initial");
+        this._renderer.setStyle(body, "user-select", "initial");
 
         this.hideBar();
 
@@ -492,10 +493,11 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._isDragg = true;
 
         // disable text selection
-        this._renderer.setStyle(document.querySelector("body"), "-webkit-user-select", "none");
-        this._renderer.setStyle(document.querySelector("body"), "-moz-user-select", "none");
-        this._renderer.setStyle(document.querySelector("body"), "-ms-user-select", "none");
-        this._renderer.setStyle(document.querySelector("body"), "user-select", "none");
+        const body = document.body;
+        this._renderer.setStyle(body, "-webkit-user-select", "none");
+        this._renderer.setStyle(body, "-moz-user-select", "none");
+        this._renderer.setStyle(body, "-ms-user-select", "none");
+        this._renderer.setStyle(body, "user-select", "none");
 
 
         this._barMouseDownPageY = e.pageY;
