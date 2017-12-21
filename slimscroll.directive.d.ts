@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2} from "@angular/core";
+import {Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2, RendererFactory2} from "@angular/core";
 
 @Directive({
     selector: "[slimScroll]",
@@ -23,7 +23,7 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     private _changesTracker;
     private _barMouseDownPageY;
     private _startBarTop;
-    constructor(_renderer: Renderer2, elementRef: ElementRef);
+    constructor(rendererFactory: RendererFactory2, elementRef: ElementRef);
     ngOnInit(): void;
     ngOnDestroy(): void;
     onResize(): void;

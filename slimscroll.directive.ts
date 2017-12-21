@@ -1,4 +1,4 @@
-import {Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Output, Renderer2} from "@angular/core";
+import {Directive, ElementRef, HostListener, Injectable, Input, OnDestroy, OnInit, Output, Renderer2, RendererFactory2} from "@angular/core";
 
 interface SlimScrollOptions {
     // width in pixels of the visible scroll area
@@ -128,8 +128,13 @@ export class SlimScroll implements OnInit, OnDestroy {
     private _barMouseDownPageY: number;
     private _startBarTop: number;
 
-    public constructor(private _renderer: Renderer2,
-                       elementRef: ElementRef) {
+    private _renderer: Renderer2;
+
+    public constructor(
+        rendererFactory: RendererFactory2,
+        elementRef: ElementRef
+    ) {
+        this._renderer = rendererFactory.createRenderer(null, null);
         this._me = elementRef.nativeElement;
         this._options = {...defaults};
     }

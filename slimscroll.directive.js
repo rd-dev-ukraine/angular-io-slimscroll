@@ -46,9 +46,8 @@ var defaults = {
     maxHeightBeforeEnable: undefined,
 };
 var SlimScroll = /** @class */ (function () {
-    function SlimScroll(_renderer, elementRef) {
+    function SlimScroll(rendererFactory, elementRef) {
         var _this = this;
-        this._renderer = _renderer;
         this._minBarHeight = 30;
         this._releaseScroll = false;
         this.trackPanelHeightChanged = function () {
@@ -331,6 +330,7 @@ var SlimScroll = /** @class */ (function () {
             // attach scroll events
             _this.attachWheel(window);
         };
+        this._renderer = rendererFactory.createRenderer(null, null);
         this._me = elementRef.nativeElement;
         this._options = __assign({}, defaults);
     }
@@ -697,7 +697,7 @@ var SlimScroll = /** @class */ (function () {
         core_1.Directive({
             selector: "[slimScroll]"
         }),
-        __metadata("design:paramtypes", [core_1.Renderer2,
+        __metadata("design:paramtypes", [core_1.RendererFactory2,
             core_1.ElementRef])
     ], SlimScroll);
     return SlimScroll;
