@@ -1,6 +1,6 @@
 {
   "name": "angular-io-slimscroll",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "license": "MIT",
   "description": "Slim scroll directive for angular2",
   "main": "./index.js",

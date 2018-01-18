@@ -137,6 +137,14 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._renderer = rendererFactory.createRenderer(null, null);
         this._me = elementRef.nativeElement;
         this._options = {...defaults};
+
+        this.showBar = this.showBar.bind(this);
+        this.hideBar = this.hideBar.bind(this);
+        this.onWheel = this.onWheel.bind(this);
+        this.barMouseMove = this.barMouseMove.bind(this);
+        this.barMouseUp = this.barMouseUp.bind(this);
+        this.barMouseDown = this.barMouseDown.bind(this);
+        this.railMouseDown = this.railMouseDown.bind(this);
     }
 
     public ngOnInit(): void {
@@ -316,7 +324,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }, 1000);
     };
 
-    private hasParentClass = (e: HTMLElement, className: string): boolean => {
+    private hasParentClass(e: HTMLElement, className: string): boolean {
         if (!e) {
             return false;
         }
@@ -328,7 +336,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         return this.hasParentClass(e.parentElement, className);
     };
 
-    private onWheel = (e: MouseWheelEvent): void => {
+    private onWheel(e: MouseWheelEvent): void {
         // use mouse wheel only when mouse is over
         if (!this._isOverPanel) {
             return;
@@ -357,7 +365,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     };
 
-    private attachWheel = (target: Window): void => {
+    private attachWheel(target: Window): void {
         if (window.addEventListener) {
             target.addEventListener("DOMMouseScroll", this.onWheel, false);
             target.addEventListener("mousewheel", this.onWheel, false);
@@ -366,7 +374,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     };
 
-    private showBar = (): void => {
+    private showBar(): void {
         // recalculate bar height
         this.getBarHeight();
         clearTimeout(this._queueHide || 0);
@@ -392,7 +400,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         this._renderer.setStyle(this._rail, "opacity", this._options.railOpacity.toString());
     };
 
-    private hideBar = (): void => {
+    private hideBar(): void {
         // only hide when options allow it
         if (
             !this._options.alwaysVisible
@@ -407,7 +415,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     };
 
-    public scrollContent = (y: number, isWheel: boolean, isJump: boolean = false) => {
+    public scrollContent(y: number, isWheel: boolean, isJump: boolean = false) {
         this._releaseScroll = false;
         let delta: number = y;
         const maxTop: number = this._me.offsetHeight - this._bar.offsetHeight;
@@ -478,7 +486,7 @@ export class SlimScroll implements OnInit, OnDestroy {
 
     }
 
-    private railMouseDown = (event: MouseEvent) => {
+    private railMouseDown(event: MouseEvent) {
         const clientRects = this._rail.getBoundingClientRect();
         const elementOffsetTop = clientRects.top + window.scrollY;
         const moveTo = event.pageY - elementOffsetTop - (this._barHeight / 2);
@@ -488,7 +496,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         this.scrollContent(scrollTo, false, true);
     };
 
-    private barMouseMove = (event: MouseEvent) => {
+    private barMouseMove(event: MouseEvent) {
         const currTop = this._startBarTop + event.pageY - this._barMouseDownPageY;
         this._renderer.setStyle(this._bar, "top", (currTop >= 0 ? currTop : 0) + "px");
         const position = this._bar.getClientRects()[0];
@@ -498,7 +506,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         }
     };
 
-    private barMouseUp = () => {
+    private barMouseUp() {
         this._isDragg = false;
 
         // return normal text selection
@@ -514,7 +522,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         document.removeEventListener("mouseup", this.barMouseUp, false);
     };
 
-    private barMouseDown = (e) => {
+    private barMouseDown(e) {
         this._isDragg = true;
 
         // disable text selection
@@ -534,7 +542,7 @@ export class SlimScroll implements OnInit, OnDestroy {
         return false;
     }
 
-    private setup = (): void => {
+    private setup(): void {
         // check whether it changes in content
         this.trackPanelHeightChanged();
 
