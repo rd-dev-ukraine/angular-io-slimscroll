@@ -54,17 +54,17 @@ export declare class SlimScroll implements OnInit, OnDestroy {
     @Input() maxHeightBeforeEnable: number;
     private init();
     private trackPanelHeightChanged;
-    private hasParentClass;
-    private onWheel;
-    private attachWheel;
-    private showBar;
-    private hideBar;
-    scrollContent: (y: number, isWheel: boolean, isJump?: boolean) => void;
+    private hasParentClass(e, className);
+    private onWheel(e);
+    private attachWheel(target);
+    private showBar();
+    private hideBar();
+    scrollContent(y: number, isWheel: boolean, isJump?: boolean): void;
     private getBarHeight();
     private refresh();
-    private railMouseDown;
-    private barMouseMove;
-    private barMouseUp;
-    private barMouseDown;
-    private setup;
+    private railMouseDown(event);
+    private barMouseMove(event);
+    private barMouseUp();
+    private barMouseDown(e);
+    private setup();
 }
